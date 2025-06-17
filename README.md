@@ -1,14 +1,30 @@
-# Descrição
-Repositório de automação para configurar rapidamente o ambiente de terminal no Fedora Linux com ZSH, TMUX e fontes Nerd Font, incluindo temas e plugins.  Utiliza um script em Python 3 para instalação automática de dependências, cópia dos dotfiles e configuração do ambiente. Ideal para pós-instalação, formatação ou padronização de máquinas DevOps.
+# 🧰 terminal-config
 
-# ⚙️ terminal-config
+Automação completa para configurar seu terminal Linux (Fedora) com ZSH, TMUX, Nerd Font e plugins essenciais.
 
-Repositório de automação para configurar rapidamente o terminal com:
+> 📌 Ideal para pós-instalação, formatação ou padronização de ambientes DevOps.
 
-- ZSH (com Powerlevel10k)
-- TMUX (com TPM)
-- Fontes Nerd Font
-- Scripts automatizados em Python
+---
+
+## 📄 Descrição
+
+Repositório de automação para configurar rapidamente o ambiente de terminal no **Fedora Linux**, utilizando:
+
+- **ZSH** com tema **Powerlevel10k**
+- **TMUX** com **TPM (Tmux Plugin Manager)**
+- **Fontes Nerd Font** compatíveis com o terminal
+- **Scripts em Python 3** para instalação automatizada de dependências e cópia dos dotfiles
+
+---
+
+## ⚙️ Recursos
+
+✅ Instalação automatizada via `install.py`  
+✅ Suporte a Powerlevel10k e TPM  
+✅ Fontes personalizadas para terminais compatíveis  
+✅ Reutilização rápida do ambiente em novos setups  
+
+---
 
 ## 🚀 Instalação
 
