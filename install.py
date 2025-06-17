@@ -21,10 +21,12 @@ def install_packages():
     run("sudo dnf install -y zsh tmux git curl wget fontconfig")
 
 def install_oh_my_zsh():
-    print("🌀 Instalando Oh-My-Zsh...")
-    zsh_path = HOME / ".oh-my-zsh"
-    if not zsh_path.exists():
-        run("sh -c \"$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"")
+    print("🌀 Instalando Oh-My-Zsh sem prompt...")
+
+    zsh_dir = HOME / ".oh-my-zsh"
+    if not zsh_dir.exists():
+        run(f"git clone https://github.com/ohmyzsh/ohmyzsh.git {zsh_dir}")
+        run(f"cp {zsh_dir}/templates/zshrc.zsh-template {HOME}/.zshrc")
 
 def install_powerlevel10k():
     print("🎨 Instalando tema Powerlevel10k...")
@@ -61,10 +63,10 @@ def copy_configs():
         print(f"✅ Copiado: {file.name}")
 
 def set_default_shell():
-    print("🖥️ Definindo ZSH como shell padrão...")
+    print("🖥️ Definindo ZSH como shell padrão (via sudo)...")
     zsh_path = shutil.which("zsh")
     if zsh_path:
-        run(f"chsh -s {zsh_path}")
+        run(f"sudo chsh -s {zsh_path} $(whoami)")
 
 if __name__ == "__main__":
     install_packages()
