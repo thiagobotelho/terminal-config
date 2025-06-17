@@ -18,7 +18,7 @@ def run(cmd: str):
 
 def install_packages():
     print("📦 Instalando pacotes base (dnf)...")
-    run("sudo dnf install -y zsh tmux git curl wget fontconfig")
+    run("sudo dnf install -y zsh tmux git curl wget fontconfig fzf")
 
 def install_oh_my_zsh():
     print("🌀 Instalando Oh-My-Zsh (modo silencioso)...")
