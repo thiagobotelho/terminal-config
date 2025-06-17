@@ -20,13 +20,21 @@ def install_packages():
     print("📦 Instalando pacotes base (dnf)...")
     run("sudo dnf install -y zsh tmux git curl wget fontconfig")
 
-def install_oh_my_zsh():
-    print("🌀 Instalando Oh-My-Zsh sem prompt...")
+def install_oh_my_zsh_plugins():
+    print("🔌 Instalando plugins do Oh-My-Zsh...")
 
-    zsh_dir = HOME / ".oh-my-zsh"
-    if not zsh_dir.exists():
-        run(f"git clone https://github.com/ohmyzsh/ohmyzsh.git {zsh_dir}")
-        run(f"cp {zsh_dir}/templates/zshrc.zsh-template {HOME}/.zshrc")
+    custom_plugins = HOME / ".oh-my-zsh/custom/plugins"
+    plugins = {
+        "zsh-autosuggestions": "https://github.com/zsh-users/zsh-autosuggestions.git",
+        "zsh-syntax-highlighting": "https://github.com/zsh-users/zsh-syntax-highlighting.git",
+        "zsh-history-substring-search": "https://github.com/zsh-users/zsh-history-substring-search.git",
+        "zsh-fzf-history-search": "https://github.com/joshskidmore/zsh-fzf-history-search.git"
+    }
+
+    for name, repo in plugins.items():
+        dest = custom_plugins / name
+        if not dest.exists():
+            run(f"git clone {repo} {dest}")
 
 def install_powerlevel10k():
     print("🎨 Instalando tema Powerlevel10k...")
@@ -71,6 +79,7 @@ def set_default_shell():
 if __name__ == "__main__":
     install_packages()
     install_oh_my_zsh()
+    install_oh_my_zsh_plugins()
     install_powerlevel10k()
     copy_configs()
     install_fonts()
