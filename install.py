@@ -114,6 +114,20 @@ def set_default_shell():
     else:
         print("❌ ZSH não encontrado no PATH.")
 
+def configure_alacritty():
+    print("📁 Configurando Alacritty com tema e fonte...")
+    config_dir = HOME / ".config" / "alacritty"
+    config_dir.mkdir(parents=True, exist_ok=True)
+
+    source_toml = SETUP_DIR / "alacritty.toml"
+    target_toml = config_dir / "alacritty.toml"
+
+    if source_toml.exists():
+        shutil.copy(source_toml, target_toml)
+        print(f"✅ alacritty.toml copiado para {target_toml}")
+    else:
+        print("❌ Arquivo setup/alacritty.toml não encontrado!")
+
 if __name__ == "__main__":
     install_packages()
     install_catppuccin_theme()
@@ -124,4 +138,5 @@ if __name__ == "__main__":
     install_fonts()
     install_tpm()
     set_default_shell()
+    configure_alacritty()
     print("✅ Ambiente de terminal configurado com sucesso.")
