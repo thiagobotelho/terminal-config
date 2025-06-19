@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 
 import os
@@ -18,7 +17,32 @@ def run(cmd: str):
 
 def install_packages():
     print("📦 Instalando pacotes base (dnf)...")
-    run("sudo dnf install -y zsh tmux git curl wget fontconfig fzf")
+    run("sudo dnf install -y zsh tmux git curl wget fontconfig fzf alacritty papirus-icon-theme")
+
+def install_catppuccin_theme():
+    print("🎨 Instalando Catppuccin GTK Theme manualmente...")
+    theme_repo = HOME / "catppuccin-gtk"
+    theme_dest = HOME / ".themes"
+    theme_name = "Catppuccin-Mocha-Standard-Blue-Dark"
+
+    if not theme_repo.exists():
+        run(f"git clone https://github.com/catppuccin/gtk.git {theme_repo}")
+
+    src_theme_path = theme_repo / "themes" / theme_name
+    dest_theme_path = theme_dest / theme_name
+
+    if not src_theme_path.exists():
+        print(f"❌ Tema não encontrado em: {src_theme_path}")
+        return
+
+    theme_dest.mkdir(parents=True, exist_ok=True)
+    if not dest_theme_path.exists():
+        shutil.copytree(src_theme_path, dest_theme_path)
+        print(f"✅ Tema copiado: {theme_name}")
+
+    print("🎨 Aplicando tema Catppuccin + ícones Papirus...")
+    run(f"gsettings set org.gnome.desktop.interface gtk-theme '{theme_name}'")
+    run("gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'")
 
 def install_oh_my_zsh():
     print("🌀 Instalando Oh-My-Zsh (modo silencioso)...")
@@ -65,24 +89,34 @@ def install_fonts():
 
 def copy_configs():
     print("📁 Copiando arquivos de configuração...")
-    shutil.copy(SETUP_DIR / "zshrc", HOME / ".zshrc")
-    shutil.copy(SETUP_DIR / "p10k.zsh", HOME / ".p10k.zsh")
-    shutil.copy(SETUP_DIR / "tmux.conf", HOME / ".tmux.conf")
+    for file_name in ["zshrc", "p10k.zsh", "tmux.conf"]:
+        src = SETUP_DIR / file_name
+        dest = HOME / f".{file_name}"
+        if src.exists():
+            shutil.copy(src, dest)
+        else:
+            print(f"⚠️ Arquivo não encontrado: {file_name}")
 
     print("📁 Copiando módulos customizados do tmux...")
-    CUSTOM_MODULES_DST.mkdir(parents=True, exist_ok=True)
-    for file in CUSTOM_MODULES_SRC.glob("*.conf"):
-        shutil.copy(file, CUSTOM_MODULES_DST)
-        print(f"✅ Copiado: {file.name}")
+    if CUSTOM_MODULES_SRC.exists():
+        CUSTOM_MODULES_DST.mkdir(parents=True, exist_ok=True)
+        for file in CUSTOM_MODULES_SRC.glob("*.conf"):
+            shutil.copy(file, CUSTOM_MODULES_DST)
+            print(f"✅ Copiado: {file.name}")
+    else:
+        print("⚠️ Diretório de módulos customizados não encontrado.")
 
 def set_default_shell():
     print("🖥️ Definindo ZSH como shell padrão (via sudo)...")
     zsh_path = shutil.which("zsh")
     if zsh_path:
         run(f"sudo chsh -s {zsh_path} $(whoami)")
+    else:
+        print("❌ ZSH não encontrado no PATH.")
 
 if __name__ == "__main__":
     install_packages()
+    install_catppuccin_theme()
     install_oh_my_zsh()
     install_oh_my_zsh_plugins()
     install_powerlevel10k()
