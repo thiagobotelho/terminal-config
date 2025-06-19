@@ -20,10 +20,10 @@ def run(cmd: str, sudo: bool = False):
 
 def install_packages():
     print("📦 Instalando pacotes base (dnf)...")
-    run("dnf install -y zsh tmux git curl wget fontconfig fzf alacritty papirus-icon-theme", sudo=True)
+    run("dnf install -y zsh tmux git curl wget fontconfig fzf alacritty papirus-icon-theme gtk-murrine-engine sassc python3-pip", sudo=True)
 
 def install_catppuccin_theme():
-    print("🎨 Instalando Catppuccin GTK Theme via build.sh...")
+    print("🎨 Instalando Catppuccin GTK Theme via script Python...")
     theme_repo = HOME / "catppuccin-gtk"
     theme_name = "Catppuccin-Mocha-Standard-Blue-Dark"
     theme_dest = HOME / ".themes" / theme_name
@@ -31,17 +31,22 @@ def install_catppuccin_theme():
     if not theme_repo.exists():
         run(f"git clone https://github.com/catppuccin/gtk.git {theme_repo}")
 
-    build_script = theme_repo / "build.sh"
-    if build_script.exists():
-        run(f"cd {theme_repo} && chmod +x build.sh && ./build.sh -t mocha -a standard -c blue -s dark")
+    # Instala dependências do tema
+    requirements = theme_repo / "requirements.txt"
+    if requirements.exists():
+        run(f"pip3 install --user -r {requirements}")
     else:
-        print("❌ build.sh não encontrado. Abortando instalação do tema.")
-        return
+        print("⚠️ requirements.txt não encontrado. Pulando dependências Python.")
 
+    # Executa o script de instalação do tema
+    run(f"python3 {theme_repo}/install.py mocha -a blue -s standard -d ~/.themes -t dark")
+
+    # Verifica se foi instalado corretamente
     if not theme_dest.exists():
         print(f"❌ Tema compilado não encontrado em: {theme_dest}")
         return
 
+    # Aplica o tema e ícones
     run(f"gsettings set org.gnome.desktop.interface gtk-theme '{theme_name}'")
     run("gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'")
 
