@@ -1,0 +1,27 @@
+import = ["~/.config/alacritty/catppuccin/catppuccin-mocha.toml"]
+
+[window]
+startup_mode = "Maximized"
+opacity = 0.95
+decorations = "Full"
+
+[font]
+normal = { family = "SauceCodePro Nerd Font Mono", style = "Regular" }
+bold = { family = "SauceCodePro Nerd Font Mono", style = "Bold" }
+italic = { family = "SauceCodePro Nerd Font Mono", style = "Italic" }
+bold_italic = { family = "SauceCodePro Nerd Font Mono", style = "BoldItalic" }
+size = 11.0
+
+[cursor]
+style = { shape = "Block", blinking = "On" }
+blink_interval = 500
+
+[keyboard]
+bindings = [
+  { key = "V", mods = "Control|Shift", action = "Paste" },
+  { key = "C", mods = "Control|Shift", action = "Copy" }
+]
+
+[shell]
+program = "/bin/zsh"
+args = ["-c", "tmux attach || tmux"]
