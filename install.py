@@ -25,8 +25,8 @@ def install_packages():
 def install_catppuccin_theme():
     print("🎨 Instalando Catppuccin GTK Theme via install.py...")
     theme_repo = HOME / "catppuccin-gtk"
-    theme_variant = "catppuccin-mocha-blue-standard+default-dark"
-    theme_dest = HOME / ".themes" / theme_variant
+    theme_variant = "catppuccin-mocha-blue-standard+default"
+    theme_dest = HOME / ".local/share/themes" / theme_variant
 
     if not theme_repo.exists():
         run(f"git clone https://github.com/catppuccin/gtk.git {theme_repo}")
