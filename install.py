@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -10,37 +9,39 @@ SETUP_DIR = Path("setup")
 FONTS_DIR = HOME / ".local/share/fonts"
 CUSTOM_MODULES_SRC = SETUP_DIR / "custom_modules"
 CUSTOM_MODULES_DST = HOME / "custom_modules"
+ALACRITTY_CONF_SRC = SETUP_DIR / "alacritty.toml"
+ALACRITTY_CONF_DST = HOME / ".config/alacritty/alacritty.toml"
 
-def run(cmd: str):
+def run(cmd: str, sudo: bool = False):
     print(f"🔧 Executando: {cmd}")
+    if sudo:
+        cmd = f"sudo {cmd}"
     subprocess.run(cmd, shell=True, check=True)
 
 def install_packages():
     print("📦 Instalando pacotes base (dnf)...")
-    run("sudo dnf install -y zsh tmux git curl wget fontconfig fzf alacritty papirus-icon-theme")
+    run("dnf install -y zsh tmux git curl wget fontconfig fzf alacritty papirus-icon-theme", sudo=True)
 
 def install_catppuccin_theme():
-    print("🎨 Instalando Catppuccin GTK Theme manualmente...")
+    print("🎨 Instalando Catppuccin GTK Theme via build.sh...")
     theme_repo = HOME / "catppuccin-gtk"
-    theme_dest = HOME / ".themes"
     theme_name = "Catppuccin-Mocha-Standard-Blue-Dark"
+    theme_dest = HOME / ".themes" / theme_name
 
     if not theme_repo.exists():
         run(f"git clone https://github.com/catppuccin/gtk.git {theme_repo}")
 
-    src_theme_path = theme_repo / "themes" / theme_name
-    dest_theme_path = theme_dest / theme_name
-
-    if not src_theme_path.exists():
-        print(f"❌ Tema não encontrado em: {src_theme_path}")
+    build_script = theme_repo / "build.sh"
+    if build_script.exists():
+        run(f"cd {theme_repo} && chmod +x build.sh && ./build.sh -t mocha -a standard -c blue -s dark")
+    else:
+        print("❌ build.sh não encontrado. Abortando instalação do tema.")
         return
 
-    theme_dest.mkdir(parents=True, exist_ok=True)
-    if not dest_theme_path.exists():
-        shutil.copytree(src_theme_path, dest_theme_path)
-        print(f"✅ Tema copiado: {theme_name}")
+    if not theme_dest.exists():
+        print(f"❌ Tema compilado não encontrado em: {theme_dest}")
+        return
 
-    print("🎨 Aplicando tema Catppuccin + ícones Papirus...")
     run(f"gsettings set org.gnome.desktop.interface gtk-theme '{theme_name}'")
     run("gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'")
 
@@ -106,27 +107,22 @@ def copy_configs():
     else:
         print("⚠️ Diretório de módulos customizados não encontrado.")
 
+def configure_alacritty():
+    print("📁 Configurando Alacritty com tema e fonte...")
+    ALACRITTY_CONF_DST.parent.mkdir(parents=True, exist_ok=True)
+    if ALACRITTY_CONF_SRC.exists():
+        shutil.copy(ALACRITTY_CONF_SRC, ALACRITTY_CONF_DST)
+        print(f"✅ alacritty.toml copiado para {ALACRITTY_CONF_DST}")
+    else:
+        print("⚠️ alacritty.toml não encontrado no diretório setup.")
+
 def set_default_shell():
     print("🖥️ Definindo ZSH como shell padrão (via sudo)...")
     zsh_path = shutil.which("zsh")
     if zsh_path:
-        run(f"sudo chsh -s {zsh_path} $(whoami)")
+        run(f"chsh -s {zsh_path} $(whoami)", sudo=True)
     else:
         print("❌ ZSH não encontrado no PATH.")
-
-def configure_alacritty():
-    print("📁 Configurando Alacritty com tema e fonte...")
-    config_dir = HOME / ".config" / "alacritty"
-    config_dir.mkdir(parents=True, exist_ok=True)
-
-    source_toml = SETUP_DIR / "alacritty.toml"
-    target_toml = config_dir / "alacritty.toml"
-
-    if source_toml.exists():
-        shutil.copy(source_toml, target_toml)
-        print(f"✅ alacritty.toml copiado para {target_toml}")
-    else:
-        print("❌ Arquivo setup/alacritty.toml não encontrado!")
 
 if __name__ == "__main__":
     install_packages()
@@ -137,6 +133,6 @@ if __name__ == "__main__":
     copy_configs()
     install_fonts()
     install_tpm()
-    set_default_shell()
     configure_alacritty()
+    set_default_shell()
     print("✅ Ambiente de terminal configurado com sucesso.")
