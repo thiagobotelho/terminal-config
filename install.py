@@ -18,6 +18,40 @@ def run(cmd: str, sudo: bool = False, **kwargs):
         cmd = f"sudo {cmd}"
     subprocess.run(cmd, shell=True, check=True, **kwargs)
 
+def is_gnome_terminal_available():
+    try:
+        output = subprocess.check_output(["gsettings", "list-schemas"]).decode()
+        return "org.gnome.Terminal.Legacy.Profile" in output
+    except Exception:
+        return False
+
+def set_gnome_terminal_font(font_name="SauceCodePro Nerd Font Mono 11"):
+    print(f"🕋️ Definindo fonte '{font_name}' no GNOME Terminal...")
+
+    try:
+        default_profile = subprocess.check_output([
+            "gsettings", "get", "org.gnome.Terminal.ProfilesList", "default"
+        ]).decode().strip().strip("'")
+
+        profile_path = f"/org/gnome/terminal/legacy/profiles:/:{default_profile}/"
+
+        subprocess.run([
+            "gsettings", "set",
+            f"org.gnome.Terminal.Legacy.Profile:{profile_path}",
+            "use-system-font", "false"
+        ], check=True)
+
+        subprocess.run([
+            "gsettings", "set",
+            f"org.gnome.Terminal.Legacy.Profile:{profile_path}",
+            "font", font_name
+        ], check=True)
+
+        print("✅ Fonte aplicada com sucesso no GNOME Terminal.")
+
+    except subprocess.CalledProcessError:
+        print("❌ Erro ao aplicar a fonte no GNOME Terminal.")
+
 def install_packages():
     print("📦 Instalando pacotes base (dnf)...")
     run("dnf install -y zsh tmux git curl wget fontconfig fzf alacritty papirus-icon-theme", sudo=True)
@@ -81,13 +115,18 @@ def install_powerlevel10k():
         run(f"git clone --depth=1 https://github.com/romkatv/powerlevel10k.git {theme_path}")
 
 def install_fonts():
-    print("🔤 Instalando fontes Nerd Font...")
+    print("🌤 Instalando fontes Nerd Font...")
     fonts_path = SETUP_DIR / "fonts"
     FONTS_DIR.mkdir(parents=True, exist_ok=True)
     for font in fonts_path.glob("*.ttf"):
         shutil.copy(font, FONTS_DIR)
         print(f"✅ Fonte instalada: {font.name}")
     run("fc-cache -fv")
+
+    if is_gnome_terminal_available():
+        set_gnome_terminal_font("SauceCodePro Nerd Font Mono 11")
+    else:
+        print("⚠️ GNOME Terminal não disponível ou sessão gráfica ausente. Fonte não aplicada.")
 
 def copy_configs():
     print("📁 Copiando arquivos de configuração...")
