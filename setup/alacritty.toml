@@ -22,6 +22,5 @@ bindings = [
   { key = "C", mods = "Control|Shift", action = "Copy" }
 ]
 
-[shell]
-program = "/bin/zsh"
-args = ["-c", "tmux attach || tmux"]
+[terminal]
+shell = { program = "/bin/zsh", args = ["-c", "tmux attach || tmux"] }
