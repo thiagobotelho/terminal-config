@@ -71,13 +71,6 @@ def install_powerlevel10k():
     if not theme_path.exists():
         run(f"git clone --depth=1 https://github.com/romkatv/powerlevel10k.git {theme_path}")
 
-def install_tpm():
-    print("🔌 Instalando TPM (Tmux Plugin Manager)...")
-    tpm_dir = HOME / ".tmux/plugins/tpm"
-    if not tpm_dir.exists():
-        run(f"git clone https://github.com/tmux-plugins/tpm {tpm_dir}")
-    run(f"{tpm_dir}/bin/install_plugins")
-
 def install_fonts():
     print("🔤 Instalando fontes Nerd Font...")
     fonts_path = SETUP_DIR / "fonts"
@@ -105,6 +98,19 @@ def copy_configs():
             print(f"✅ Copiado: {file.name}")
     else:
         print("⚠️ Diretório de módulos customizados não encontrado.")
+
+def install_tpm():
+    print("🔧 Instalando TPM (Tmux Plugin Manager)...")
+    tpm_dir = HOME / ".tmux/plugins/tpm"
+    if not tpm_dir.exists():
+        run(f"git clone https://github.com/tmux-plugins/tpm {tpm_dir}", shell=True, check=True)
+
+    print("📂 Carregando configuração do tmux.conf...")
+    run("tmux start-server", shell=True, check=True)
+    run("tmux source-file ~/.tmux.conf", shell=True, check=True)
+
+    print("🔌 Instalando plugins...")
+    run(f"{tpm_dir}/bin/install_plugins", shell=True, check=True)
 
 def configure_alacritty():
     print("📁 Configurando Alacritty com tema e fonte...")
