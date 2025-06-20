@@ -12,11 +12,11 @@ CUSTOM_MODULES_DST = HOME / "custom_modules"
 ALACRITTY_CONF_SRC = SETUP_DIR / "alacritty.toml"
 ALACRITTY_CONF_DST = HOME / ".config/alacritty/alacritty.toml"
 
-def run(cmd: str, sudo: bool = False):
+def run(cmd: str, sudo: bool = False, **kwargs):
     print(f"🔧 Executando: {cmd}")
     if sudo:
         cmd = f"sudo {cmd}"
-    subprocess.run(cmd, shell=True, check=True)
+    subprocess.run(cmd, shell=True, check=True, **kwargs)
 
 def install_packages():
     print("📦 Instalando pacotes base (dnf)...")
@@ -102,15 +102,16 @@ def copy_configs():
 def install_tpm():
     print("🔧 Instalando TPM (Tmux Plugin Manager)...")
     tpm_dir = HOME / ".tmux/plugins/tpm"
+
     if not tpm_dir.exists():
-        run(f"git clone https://github.com/tmux-plugins/tpm {tpm_dir}", shell=True, check=True)
+        subprocess.run(f"git clone https://github.com/tmux-plugins/tpm {tpm_dir}", shell=True, check=True)
 
     print("📂 Carregando configuração do tmux.conf...")
-    run("tmux start-server", shell=True, check=True)
-    run("tmux source-file ~/.tmux.conf", shell=True, check=True)
+    subprocess.run("tmux start-server", shell=True, check=True)
+    subprocess.run("tmux source-file ~/.tmux.conf", shell=True, check=True)
 
-    print("🔌 Instalando plugins...")
-    run(f"{tpm_dir}/bin/install_plugins", shell=True, check=True)
+    print("🔌 Instalando plugins do TPM...")
+    subprocess.run(f"{tpm_dir}/bin/install_plugins", shell=True, check=True)
 
 def configure_alacritty():
     print("📁 Configurando Alacritty com tema e fonte...")
