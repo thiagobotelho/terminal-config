@@ -116,9 +116,24 @@ def install_tpm():
 def configure_alacritty():
     print("📁 Configurando Alacritty com tema e fonte...")
     ALACRITTY_CONF_DST.parent.mkdir(parents=True, exist_ok=True)
+
     if ALACRITTY_CONF_SRC.exists():
-        shutil.copy(ALACRITTY_CONF_SRC, ALACRITTY_CONF_DST)
-        print(f"✅ alacritty.toml copiado para {ALACRITTY_CONF_DST}")
+        content = ALACRITTY_CONF_SRC.read_text()
+
+        if 'import =' in content and '[general]' not in content:
+            print("🔧 Corrigindo sintaxe de 'import' no alacritty.toml...")
+            lines = content.splitlines()
+            new_lines = []
+            inside_header = False
+            for line in lines:
+                stripped = line.strip()
+                if stripped.startswith('import'):
+                    new_lines.append('[general]')
+                new_lines.append(line)
+            content = '\n'.join(new_lines)
+
+        ALACRITTY_CONF_DST.write_text(content)
+        print(f"✅ alacritty.toml copiado e ajustado para {ALACRITTY_CONF_DST}")
     else:
         print("⚠️ alacritty.toml não encontrado no diretório setup.")
 
