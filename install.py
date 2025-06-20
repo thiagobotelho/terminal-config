@@ -47,9 +47,18 @@ def install_catppuccin_theme():
 def install_oh_my_zsh():
     print("🌀 Instalando Oh-My-Zsh (modo silencioso)...")
     zsh_dir = HOME / ".oh-my-zsh"
+
     if not zsh_dir.exists():
         run(f"git clone https://github.com/ohmyzsh/ohmyzsh.git {zsh_dir}")
         run(f"cp {zsh_dir}/templates/zshrc.zsh-template {HOME}/.zshrc")
+        print("✅ Oh-My-Zsh instalado e .zshrc aplicado.")
+
+    ssh_dir = HOME / ".ssh"
+    if not ssh_dir.exists():
+        ssh_dir.mkdir(mode=0o700)
+        print("✅ Diretório ~/.ssh criado com permissão 700 (para o ssh-agent).")
+    else:
+        print("ℹ️ Diretório ~/.ssh já existe.")
 
 def install_oh_my_zsh_plugins():
     print("🔌 Instalando plugins do Oh-My-Zsh...")
