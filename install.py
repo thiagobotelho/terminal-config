@@ -146,7 +146,7 @@ def copy_configs():
             print(f"✅ Copiado: {file.name}")
     else:
         print("⚠️ Diretório de módulos customizados não encontrado.")
-
+        
 def install_tpm():
     print("🔧 Instalando TPM (Tmux Plugin Manager)...")
     tpm_dir = HOME / ".tmux/plugins/tpm"
@@ -154,9 +154,15 @@ def install_tpm():
     if not tpm_dir.exists():
         subprocess.run(f"git clone https://github.com/tmux-plugins/tpm {tpm_dir}", shell=True, check=True)
 
-    print("📂 Carregando configuração do tmux.conf...")
-    subprocess.run("tmux start-server", shell=True, check=True)
+    tmux_conf = HOME / ".tmux.conf"
+    if not tmux_conf.exists():
+        print("❌ Arquivo ~/.tmux.conf não encontrado. Abortando configuração do TPM.")
+        return
+
+    print("📂 Aplicando configuração do tmux.conf em sessão temporária...")
+    subprocess.run("tmux new-session -d -s temp-tpm-session", shell=True, check=True)
     subprocess.run("tmux source-file ~/.tmux.conf", shell=True, check=True)
+    subprocess.run("tmux kill-session -t temp-tpm-session", shell=True, check=True)
 
     print("🔌 Instalando plugins do TPM...")
     subprocess.run(f"{tpm_dir}/bin/install_plugins", shell=True, check=True)
