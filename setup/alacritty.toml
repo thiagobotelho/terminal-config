@@ -1,3 +1,4 @@
+[general]
 import = ["~/.config/alacritty/catppuccin/catppuccin-mocha.toml"]
 
 [window]
@@ -16,11 +17,25 @@ size = 11.0
 style = { shape = "Block", blinking = "On" }
 blink_interval = 500
 
-[keyboard]
-bindings = [
-  { key = "V", mods = "Control|Shift", action = "Paste" },
-  { key = "C", mods = "Control|Shift", action = "Copy" }
-]
-
 [terminal]
 shell = { program = "/bin/zsh", args = ["-c", "tmux attach || tmux"] }
+
+[keyboard]
+bindings = [
+  # Copiar e colar (clipboard do sistema)
+  { key = "C", mods = "Control|Shift", action = "Copy" },
+  { key = "V", mods = "Control|Shift", action = "Paste" },
+
+  # Zoom in/out e reset
+  { key = "Equals", mods = "Control", action = "IncreaseFontSize" },
+  { key = "Minus",  mods = "Control", action = "DecreaseFontSize" },
+  { key = "Key0",   mods = "Control", action = "ResetFontSize" },
+
+  # Scroll
+  { key = "PageUp",   action = "ScrollPageUp" },
+  { key = "PageDown", action = "ScrollPageDown" }
+]
+
+[[mouse.bindings]]
+mouse = "Right"
+action = "PasteSelection"
