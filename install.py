@@ -54,7 +54,7 @@ def set_gnome_terminal_font(font_name="SauceCodePro Nerd Font Mono 11"):
 
 def install_packages():
     print("📦 Instalando pacotes base (dnf)...")
-    run("dnf install -y zsh tmux git curl wget fontconfig fzf alacritty papirus-icon-theme", sudo=True)
+    run("dnf install -y zsh tmux git curl wget fontconfig fzf alacritty papirus-icon-theme python3-pip", sudo=True)
 
 def install_catppuccin_theme():
     print("🎨 Instalando Catppuccin GTK Theme via install.py...")
