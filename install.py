@@ -75,7 +75,7 @@ def install_catppuccin_theme():
         print(f"❌ Tema compilado não encontrado em: {theme_dest}")
         return
 
-    run(f"gsettings set org.gnome.desktop.interface gtk-theme 'Catppuccin-Mocha-Blue-Dark'")
+    run("gsettings set org.gnome.desktop.interface gtk-theme 'catppuccin-mocha-blue-standard+default'")
     run("gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'")
 
 def install_oh_my_zsh():
