@@ -56,6 +56,28 @@ def install_packages():
     print("📦 Instalando pacotes base (dnf)...")
     run("dnf install -y zsh tmux git curl wget fontconfig fzf alacritty papirus-icon-theme python3-pip", sudo=True)
 
+def install_catppuccin_alacritty_themes():
+    print("🎨 Instalando temas Catppuccin para Alacritty...")
+    theme_dir = HOME / ".config/alacritty"
+    theme_dir.mkdir(parents=True, exist_ok=True)
+
+    themes = [
+        "catppuccin-latte.toml",
+        "catppuccin-frappe.toml",
+        "catppuccin-macchiato.toml",
+        "catppuccin-mocha.toml"
+    ]
+
+    base_url = "https://github.com/catppuccin/alacritty/raw/main/"
+
+    for theme in themes:
+        dest_file = theme_dir / theme
+        if not dest_file.exists():
+            run(f"curl -LO --output-dir {theme_dir} {base_url}{theme}")
+            print(f"✅ Tema baixado: {theme}")
+        else:
+            print(f"ℹ️ Tema já existe: {theme}")
+
 def install_catppuccin_theme():
     print("🎨 Instalando Catppuccin GTK Theme via install.py...")
     theme_repo = HOME / "catppuccin-gtk"
@@ -202,6 +224,7 @@ def set_default_shell():
 
 if __name__ == "__main__":
     install_packages()
+    install_catppuccin_alacritty_themes()
     install_catppuccin_theme()
     install_oh_my_zsh()
     install_oh_my_zsh_plugins()
