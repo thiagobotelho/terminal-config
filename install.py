@@ -3,6 +3,7 @@
 import shutil
 import subprocess
 import getpass
+import time
 import os
 from pathlib import Path
 
@@ -257,45 +258,85 @@ def configure_alacritty():
         print("⚠️ alacritty.toml não encontrado no diretório setup.")
 
 def install_nvim_and_plugins():
-    print("📝 Instalando vim-plug e provisionando plugins do Neovim...")
+    print("📝 Instalando vim-plug, plugins e espelhando config/dados para root...")
 
-    # Caminhos
+    # Paths usuário
     nvim_config = HOME / ".config" / "nvim"
-    nvim_data = HOME / ".local" / "share" / "nvim"
-    plug_vim = nvim_data / "site" / "autoload" / "plug.vim"
+    nvim_data   = HOME / ".local" / "share" / "nvim"
+    autoload    = nvim_data / "site" / "autoload"
+    plug_vim    = autoload / "plug.vim"
     init_vim_src = SETUP_DIR / "init.vim"
     init_vim_dst = nvim_config / "init.vim"
 
-    # Cria pasta de configuração do Neovim
-    nvim_config.mkdir(parents=True, exist_ok=True)
+    if not shutil.which("nvim"):
+        print("❌ Neovim não está instalado no PATH.")
+        return
 
-    # Instala vim-plug se não existir
+    # Usuário: estrutura e vim-plug
+    nvim_config.mkdir(parents=True, exist_ok=True)
+    autoload.mkdir(parents=True, exist_ok=True)
+
     if not plug_vim.exists():
         run(
             "curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs "
             "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
         )
-        print("✅ vim-plug instalado.")
+        print("✅ vim-plug instalado (usuário).")
     else:
-        print("ℹ️ vim-plug já está presente.")
+        print("ℹ️ vim-plug já presente (usuário).")
 
-    # Copia init.vim do repositório (setup/)
+    # Deploy init.vim do repo
     if init_vim_src.exists():
         shutil.copy(init_vim_src, init_vim_dst)
-        print(f"✅ init.vim copiado de {init_vim_src} para {init_vim_dst}")
+        print(f"✅ init.vim copiado para {init_vim_dst}")
     else:
-        print("⚠️ init.vim não encontrado na pasta setup.")
+        print("⚠️ init.vim não encontrado em setup/.")
 
-    # Instala pacotes de build necessários para Treesitter
+    # Deps p/ Treesitter
     run("dnf install -y gcc gcc-c++ make unzip tar", sudo=True)
 
-    # Executa PlugInstall + TSUpdate headless
+    # Bootstrap plugins (usuário)
     try:
-        run("nvim --headless +PlugInstall +qall")
-        run("nvim --headless +TSUpdate +qall")
-        print("✅ Plugins do Neovim instalados e Treesitter atualizado.")
-    except Exception:
-        print("⚠️ Não consegui rodar PlugInstall/TSUpdate. Execute manualmente dentro do nvim.")
+        run("nvim --headless '+PlugInstall --sync' '+TSUpdate' '+qall'")
+        print("✅ Plugins instalados e Treesitter atualizado (usuário).")
+    except subprocess.CalledProcessError:
+        print("⚠️ Falha ao executar PlugInstall/TSUpdate (usuário).")
+
+    # ------------------------ Root (symlink config + dados) ------------------------
+    print("📝 Espelhando configuração e dados do Neovim para root...")
+
+    # /root/.config
+    run("mkdir -p /root/.config", sudo=True)
+
+    # Backup condicional de /root/.config/nvim se for diretório real (não symlink)
+    run(
+        "bash -lc 'if [ -e /root/.config/nvim ] && [ ! -L /root/.config/nvim ]; then "
+        "mv /root/.config/nvim /root/.config/nvim.backup-$(date +%F-%H%M%S); fi'",
+        sudo=True,
+    )
+    # Symlink config -> do usuário
+    run(f"ln -sfn {nvim_config} /root/.config/nvim", sudo=True)
+    print(f"✅ /root/.config/nvim -> {nvim_config}")
+
+    # /root/.local/share
+    run("mkdir -p /root/.local/share", sudo=True)
+
+    # Backup condicional de /root/.local/share/nvim se for diretório real (não symlink)
+    run(
+        "bash -lc 'if [ -e /root/.local/share/nvim ] && [ ! -L /root/.local/share/nvim ]; then "
+        "mv /root/.local/share/nvim /root/.local/share/nvim.backup-$(date +%F-%H%M%S); fi'",
+        sudo=True,
+    )
+    # Symlink data -> do usuário (plugged, autoload, etc.)
+    run(f"ln -sfn {nvim_data} /root/.local/share/nvim", sudo=True)
+    print(f"✅ /root/.local/share/nvim -> {nvim_data}")
+
+    # vim-plug do root fica visível via symlink acima; helptags opcional
+    try:
+        run("nvim --headless '+silent helptags ALL' '+qall'", sudo=True)
+        print("✅ Helptags gerados (root).")
+    except subprocess.CalledProcessError:
+        print("ℹ️ Pulo da geração de helptags (root).")
 
 def set_default_shell():
     print("🖥️ Definindo ZSH como shell padrão (via sudo)...")

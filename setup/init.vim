@@ -37,10 +37,26 @@ require("ibl").setup({
 })
 EOF
 
+" --- TRANSPARêNCIA ---
+lua << EOF
+require("catppuccin").setup({
+  flavour = "mocha",
+  transparent_background = true,
+  term_colors = true,
+})
+EOF
+
+" Garantia de transparência pós-tema
+highlight Normal        ctermbg=NONE guibg=NONE
+highlight NormalNC      ctermbg=NONE guibg=NONE
+highlight NormalFloat   ctermbg=NONE guibg=NONE
+highlight SignColumn    ctermbg=NONE guibg=NONE
+highlight LineNr        ctermbg=NONE guibg=NONE
+highlight EndOfBuffer   ctermbg=NONE guibg=NONE
+
 " --- COLUNA ATIVA no cursor ---
 set cursorcolumn
 highlight CursorColumn ctermbg=NONE guibg=#2c2c2c
 
 " --- COMENTÁRIOS SEM ITÁLICO ---
 highlight Comment guifg=#7f849c gui=NONE cterm=NONE
-
