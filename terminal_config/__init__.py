@@ -1,0 +1,3 @@
+"""Reproducible terminal configuration for Linux and WSL."""
+
+__version__ = "1.0.0"

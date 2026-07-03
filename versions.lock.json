@@ -1,0 +1,40 @@
+{
+  "font": {
+    "name": "CascadiaCode Nerd Font",
+    "version": "3.4.0",
+    "asset": "CascadiaCode.tar.xz",
+    "url": "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/CascadiaCode.tar.xz",
+    "sha256": "804b3d311665a059140466fe142cc76cf14ef0695b7c4d3a174f7f8fba46b6e3",
+    "license": "https://github.com/ryanoasis/nerd-fonts/blob/v3.4.0/LICENSE"
+  },
+  "git": {
+    "oh-my-zsh": {
+      "url": "https://github.com/ohmyzsh/ohmyzsh.git",
+      "commit": "ff2f16e8df7386d7198009566aef09cbbc0c8212"
+    },
+    "powerlevel10k": {
+      "url": "https://github.com/romkatv/powerlevel10k.git",
+      "commit": "9253fb1c5034410c43a0c681ff8294181c54016c"
+    },
+    "tpm": {
+      "url": "https://github.com/tmux-plugins/tpm.git",
+      "commit": "e261deb1b47614eed3400089ce7197dc68acc4eb"
+    },
+    "zsh-autosuggestions": {
+      "url": "https://github.com/zsh-users/zsh-autosuggestions.git",
+      "commit": "85919cd1ffa7d2d5412f6d3fe437ebdbeeec4fc5"
+    },
+    "zsh-syntax-highlighting": {
+      "url": "https://github.com/zsh-users/zsh-syntax-highlighting.git",
+      "commit": "1d85c692615a25fe2293bdd44b34c217d5d2bf04"
+    },
+    "zsh-history-substring-search": {
+      "url": "https://github.com/zsh-users/zsh-history-substring-search.git",
+      "commit": "14c8d2e0ffaee98f2df9850b19944f32546fdea5"
+    },
+    "zsh-fzf-history-search": {
+      "url": "https://github.com/joshskidmore/zsh-fzf-history-search.git",
+      "commit": "35df458f7d9478fa88c74af762dcd296cdfd485d"
+    }
+  }
+}
