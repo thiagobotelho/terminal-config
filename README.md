@@ -157,3 +157,7 @@ gerenciador da distribuição.
 - Contribuição: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Plataformas: [SUPPORT.md](SUPPORT.md)
 - Licença: [LICENSE](LICENSE)
+
+## Aprender a configuração
+
+Consulte o [guia comentado](docs/APRENDIZADO.md) para entender componentes, escolhas, testes positivos/negativos e reversão.
